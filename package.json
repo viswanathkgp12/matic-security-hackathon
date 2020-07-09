@@ -10,6 +10,7 @@
   "author": "Viswanath Kapavarapu",
   "license": "ISC",
   "dependencies": {
+    "elliptic": "^6.5.3",
     "web3": "^1.2.9"
   }
 }
