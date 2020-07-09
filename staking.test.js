@@ -124,16 +124,24 @@ async function stake(
 ) {
   // Weird - minDeposit is actually minDeposit + 1
   // https://github.com/maticnetwork/contracts/blob/release-0.3/contracts/staking/stakeManager/StakeManager.sol#L323
-  const actualDeposit = minDeposit + 1;
+  const actualDeposit = Number(minDeposit) + 1;
 
-  const returnValue = await web3.eth.call({
-    to: stakingManagerProxyAddress,
-    data: stakingManagerContract.methods
-      .stake(actualDeposit, minHeimdallFee, toDelegate, signerPubKey)
-      .encodeABI(),
-    value: actualDeposit + minHeimdallFee,
-  });
-  return decodeMethodReturn(web3, stakingManagerABI, "stake", returnValue);
+  const gasPrice = await web3.eth.getGasPrice();
+  console.log(Number(actualDeposit) + Number(minHeimdallFee));
+
+  const { rawTransaction } = await web3.eth.accounts.signTransaction(
+    {
+      to: stakingManagerProxyAddress,
+      data: stakingManagerContract.methods
+        .stake(actualDeposit, minHeimdallFee, toDelegate, signerPubKey)
+        .encodeABI(),
+      value: Number(actualDeposit) + Number(minHeimdallFee),
+      gas: 615410,
+    },
+    walletPrivateKey
+  );
+  const { hash } = await web3.eth.sendSignedTransaction(rawTransaction);
+  // return decodeMethodReturn(web3, stakingManagerABI, "stake", returnValue);
 }
 
 // Invoke this on start
