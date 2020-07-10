@@ -1,15 +1,19 @@
 const Web3 = require("web3");
+const Bignumber = require("bignumber.js");
 
 const stakingManagerABI = require("./stakingManagerABI.json");
 const stakingManagerProxyABI = require("./stakingManagerProxyABI.json");
 const { decodeMethodReturn } = require("./utils");
-const { getPublicKey, fromPrivate } = require("./elliptic");
+const { fromPrivate } = require("./elliptic");
+const config = require("./config.json");
 
-const web3 = new Web3("http://rpc.slock.it/goerli");
+// const NETWORK = "goerli";
+const NETWORK = "ganache";
 
 // Meant for testing alone
-const walletPrivateKey =
-  "574359B1F0297AEFA3C236B6EDE4A2AEEB09886F36C46DD5638FDAF198483F8C";
+const walletPrivateKey = config[NETWORK]["walletPrivateKey"];
+
+const web3 = new Web3(config[NETWORK]["rpc"]);
 
 const res = fromPrivate(web3, walletPrivateKey);
 const walletPubKey = res.publicKey;
@@ -28,13 +32,14 @@ async function checkConnection() {
  * CONTRACTS
  * -------------------
  */
-const stakingManagerAddress = "0xb36b6963f68dde1312a9e959817e35ff6b0f0aa9";
+const stakingManagerAddress = config[NETWORK]["stakingManagerAddress"];
 const stakingManagerContract = new web3.eth.Contract(
   stakingManagerABI,
   stakingManagerAddress
 );
 
-const stakingManagerProxyAddress = "0x00200ea4ee292e253e6ca07dba5edc07c8aa37a3";
+const stakingManagerProxyAddress =
+  config[NETWORK]["stakingManagerProxyAddress"];
 const stakingManagerProxyContract = new web3.eth.Contract(
   stakingManagerProxyABI,
   stakingManagerProxyAddress
@@ -111,10 +116,10 @@ async function readStakingManagerContract() {
 
 /**
  * Main fn. to display vulnerability
- * @param {*} minDeposit
- * @param {*} minHeimdallFee
- * @param {*} toDelegate
- * @param {*} signerPubKey
+ * @param {string | number} minDeposit
+ * @param {string | number} minHeimdallFee
+ * @param {boolean} toDelegate
+ * @param {string} signerPubKey
  */
 async function stake(
   minDeposit,
@@ -124,24 +129,29 @@ async function stake(
 ) {
   // Weird - minDeposit is actually minDeposit + 1
   // https://github.com/maticnetwork/contracts/blob/release-0.3/contracts/staking/stakeManager/StakeManager.sol#L323
-  const actualDeposit = Number(minDeposit) + 1;
+  const actualDeposit = new Bignumber(minDeposit).plus(1);
 
-  const gasPrice = await web3.eth.getGasPrice();
-  console.log(Number(actualDeposit) + Number(minHeimdallFee));
+  // const gasPrice = await web3.eth.getGasPrice();
 
-  const { rawTransaction } = await web3.eth.accounts.signTransaction(
-    {
-      to: stakingManagerProxyAddress,
-      data: stakingManagerContract.methods
-        .stake(actualDeposit, minHeimdallFee, toDelegate, signerPubKey)
-        .encodeABI(),
-      value: Number(actualDeposit) + Number(minHeimdallFee),
-      gas: 615410,
-    },
-    walletPrivateKey
-  );
-  const { hash } = await web3.eth.sendSignedTransaction(rawTransaction);
-  // return decodeMethodReturn(web3, stakingManagerABI, "stake", returnValue);
+  // const { rawTransaction } = await web3.eth.accounts.signTransaction(
+  //   {
+  //     to: stakingManagerProxyAddress,
+  //     data: stakingManagerContract.methods
+  //       .stake(actualDeposit, minHeimdallFee, toDelegate, signerPubKey)
+  //       .encodeABI(),
+  //     gas: 615410,
+  //   },
+  //   walletPrivateKey
+  // );
+  // const { hash } = await web3.eth.sendSignedTransaction(rawTransaction);
+
+  const returnValue = await web3.eth.call({
+    to: stakingManagerProxyAddress,
+    data: stakingManagerContract.methods
+      .stake(actualDeposit, minHeimdallFee, toDelegate, signerPubKey)
+      .encodeABI(),
+  });
+  return decodeMethodReturn(web3, stakingManagerABI, "stake", returnValue);
 }
 
 // Invoke this on start

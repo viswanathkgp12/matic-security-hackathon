@@ -1,0 +1,16 @@
+{
+  "ganache": {
+    "stakingManagerAddress": "0x5d8116c1d0026869a2025731eA9E383CB9b62bD4",
+    "stakingManagerProxyAddress": "0x8e70A087b2A639D9979a91B5BE5c5F6244fFC9F8",
+    "maticTokenAddress": "0x4CD239B4A2FcbFE5FACa243B673DBE1A3Cf648F7",
+    "testTokenAddress": "0x39c692064c14D16Ed89deAa8f2bd4A698a0a7b19",
+    "walletPrivateKey": "9b28f36fbd67381120752d6172ecdcf10e06ab2d9a1367aac00cdcd6ac7855d3",
+    "rpc": "http://localhost:9545"
+  },
+  "goerli": {
+    "stakingManagerAddress": "0xb36b6963f68dde1312a9e959817e35ff6b0f0aa9",
+    "stakingManagerProxyAddress": "0x00200ea4ee292e253e6ca07dba5edc07c8aa37a3",
+    "walletPrivateKey": "574359B1F0297AEFA3C236B6EDE4A2AEEB09886F36C46DD5638FDAF198483F8C",
+    "rpc": "http://rpc.slock.it/goerli"
+  }
+}
