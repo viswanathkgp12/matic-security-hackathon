@@ -52,7 +52,7 @@ async function wrapProxyAndCall(abi, methodName, data, address) {
     to: address,
     data,
   });
-  
+
   if (DEBUG) {
     console.log("Return value: ", returnValue);
   }
@@ -60,6 +60,10 @@ async function wrapProxyAndCall(abi, methodName, data, address) {
   return decodeMethodReturn(web3, abi, methodName, returnValue);
 }
 
+/**
+ * Given a block data from a transaction, decode to readable values
+ * @param {string} data - Hex data of transaction
+ */
 function decodeSubmitBlockData(data) {
   // constant - bytes4(sha3(submitHeaderBlock(bytes, bytes)))
   const fnSignature = "0x6a791f11";
@@ -94,6 +98,10 @@ function decodeSubmitBlockData(data) {
   };
 }
 
+/**
+ * Get ValidatorShare Contract Info.
+ * @param {string} address
+ */
 async function readValidatorShareData(address) {
   const validatorRewards = await wrapProxyAndCall(
     validatorShareABI,
@@ -114,6 +122,10 @@ async function readValidatorShareData(address) {
   };
 }
 
+/**
+ * Get ValidatorShareProxy Address
+ * @param {string} proposer - Proposer address from submitHeaderBlock 
+ */
 async function getValidatorData(proposer) {
   const signerToValidator = await wrapProxyAndCall(
     stakingManagerABI,
@@ -134,8 +146,7 @@ async function getValidatorData(proposer) {
   };
 }
 
-async function replaySubmitBlockData(data) {
-}
+async function replaySubmitBlockData(data) {}
 
 // Invoke this on start
 async function test() {
