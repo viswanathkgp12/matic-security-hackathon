@@ -1,11 +1,37 @@
 const Web3 = require("web3");
 
+const stakingManagerABI = require("./abi/stakingManagerABI.json");
+const validatorShareABI = require("./abi/validatorShareABI.json");
 const config = require("./config.json");
+const { decodeMethodReturn } = require("./utils");
 
 const NETWORK = "goerli";
 // const NETWORK = "ganache";
 
+// Meant for testing alone
+const walletPrivateKey = config[NETWORK]["walletPrivateKey"];
+
 const web3 = new Web3(config[NETWORK]["rpc"]);
+
+/**
+ * -------------------
+ * CONTRACTS
+ * -------------------
+ */
+const stakingManagerAddress = config[NETWORK]["stakingManagerAddress"];
+const stakingManagerContract = new web3.eth.Contract(
+  stakingManagerABI,
+  stakingManagerAddress
+);
+
+const stakingManagerProxyAddress =
+  config[NETWORK]["stakingManagerProxyAddress"];
+
+const validatorShareAddress = config[NETWORK]["validatorShareAddress"];
+const validatorShareContract = new web3.eth.Contract(
+  validatorShareABI,
+  stakingManagerProxyAddress
+);
 
 /**
  * Check web3 connection
@@ -15,10 +41,35 @@ async function checkConnection() {
   return web3.eth.getBlockNumber();
 }
 
+
+/**
+ * web3.eth.call via proxy
+ * @param {string} data Bytes of calldata
+ * @param {string} address ProxyAddress
+ */
+async function wrapProxyAndCall(
+  methodName,
+  data,
+  address
+) {
+  const returnValue = await web3.eth.call({
+    to: address,
+    data,
+  });
+  return decodeMethodReturn(web3, stakingManagerABI, methodName, returnValue);
+}
+
 function decodeSubmitBlockData(data) {
+  // constant - bytes4(sha3(submitBlock(bytes, bytes)))
   const fnSignature = "0x6a791f11";
+
+  // Split fn. signature add `0x` prefix
   data = "0x" + data.split(fnSignature)[1];
+
   const result = web3.eth.abi.decodeParameters(["bytes", "bytes"], data);
+  const blockDataBytes = result["0"];
+  const sigDataBytes = result["1"]; 
+
   const dataParameters = [
     "address",
     "uint256",
@@ -27,7 +78,7 @@ function decodeSubmitBlockData(data) {
     "bytes32",
     "uint256",
   ];
-  const blockData = web3.eth.abi.decodeParameters(dataParameters, result["0"]);
+  const blockData = web3.eth.abi.decodeParameters(dataParameters, blockDataBytes);
 
   return {
     proposer: blockData["0"],
