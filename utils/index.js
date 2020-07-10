@@ -9,6 +9,10 @@ function getMethodOuputs(abi, methodName) {
 }
 
 function decodeMethodReturn(web3, abi, methodName, returnValue) {
+  if (returnValue === "0x") {
+    throw new Error("Invalid hex data to decode")
+  }
+  
   const outputs = getMethodOuputs(abi, methodName);
   const result = web3.eth.abi.decodeParameters(outputs, returnValue);
 
