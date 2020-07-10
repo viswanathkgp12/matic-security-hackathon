@@ -11,6 +11,7 @@
     "stakingManagerAddress": "0xb36b6963f68dde1312a9e959817e35ff6b0f0aa9",
     "stakingManagerProxyAddress": "0x00200ea4ee292e253e6ca07dba5edc07c8aa37a3",
     "validatorShareAddress": "0xfb20DB19E4b6EF5Ffd9af06F0E06a20D9BCf909b",
+    "rootChainProxyAddress": "0x2890ba17efe978480615e330ecb65333b880928e",
     "walletPrivateKey": "574359B1F0297AEFA3C236B6EDE4A2AEEB09886F36C46DD5638FDAF198483F8C",
     "rpc": "http://rpc.slock.it/goerli"
   }
