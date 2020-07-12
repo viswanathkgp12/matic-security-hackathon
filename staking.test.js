@@ -1,10 +1,10 @@
 const Web3 = require("web3");
 const Bignumber = require("bignumber.js");
 
-const stakingManagerABI = require("./stakingManagerABI.json");
-const stakingManagerProxyABI = require("./stakingManagerProxyABI.json");
+const stakingManagerABI = require("./abi/stakingManagerABI.json");
+const stakingManagerProxyABI = require("./abi/stakingManagerProxyABI.json");
 const { decodeMethodReturn } = require("./utils");
-const { fromPrivate } = require("./elliptic");
+const { fromPrivate } = require("./utils/elliptic");
 const config = require("./config.json");
 
 // const NETWORK = "goerli";
@@ -115,7 +115,6 @@ async function readStakingManagerContract() {
 }
 
 /**
- * Main fn. to display vulnerability
  * @param {string | number} minDeposit
  * @param {string | number} minHeimdallFee
  * @param {boolean} toDelegate
