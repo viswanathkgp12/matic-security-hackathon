@@ -82,7 +82,7 @@ contract("StakeManager", async function (accounts) {
       // Check this amount till (40% + 0.6) only
       const validator4Amount = 241;
       const unstakedValidatorID = 3;
-      const amount = web3.utils.toWei(validator4Amount);
+      const amount = web3.utils.toWei(validator4Amount.toString());
 
       console.log("Try starting an auction for unstaked validator slot ...");
       await this.stakeManager.startAuction(
