@@ -77,7 +77,7 @@ contract("StakeManager", async function (accounts) {
     }
 
     it("when bid on unstaked validator slot", async function () {
-      await doUnstake();
+      await doUnstake.call(this);
 
       // Check this amount till (40% + 0.6) only
       const validator4Amount = 241;
