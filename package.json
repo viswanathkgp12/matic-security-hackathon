@@ -15,7 +15,7 @@
     "truffle:compile": "truffle compile",
     "truffle:migrate": "truffle migrate",
     "truffle:verify": "truffle run verify $npm_package_verify_contracts --network ropsten",
-    "truffle:consensus-test": "truffle test ./test/units/staking/stakeManager/majority.test.js",
+    "truffle:consensus-test": "MAJORITY_TEST=true scripts/run-test.sh",
     "test": "truffle test",
     "coverage": "scripts/run-coverage.sh",
     "test:ci": "scripts/run-test.sh",

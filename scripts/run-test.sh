@@ -36,10 +36,13 @@ start_testrpc
 echo "Starting our own geth instance"
 start_blockchain
 
-npm run truffle:migrate "$@"
+# npm run truffle:migrate "$@"
 
 if [ "$SOLIDITY_COVERAGE" = true ]; then
   npm run truffle:coverage "$@"
+elif [ "$MAJORITY_TEST" = true ]; then
+  npm run truffle:test ./test/units/staking/stakeManager/majority.test.js "$@"
+fi
 else
   npm run truffle:test "$@"
 fi
