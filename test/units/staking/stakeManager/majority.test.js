@@ -34,7 +34,7 @@ contract("StakeManager", async function (accounts) {
           this.stakeManager
         );
       }
-      this.amount = web3.utils.toWei("500");
+      this.amount = web3.utils.toWei("200");
       await this.stakeToken.approve(this.stakeManager.address, this.amount, {
         from: wallets[3].getAddressString(),
       });
@@ -63,7 +63,7 @@ contract("StakeManager", async function (accounts) {
         await doUnstake();
 
         // Check this amount till (40% + 0.6) only
-        const validator4Amount = 161;
+        const validator4Amount = 241;
         const amount = web3.utils.toWei(`"${validator4Amount}"`);
 
         await this.stakeManager.startAuction(
